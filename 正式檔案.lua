@@ -4,7 +4,7 @@ local Window = Rayfield:CreateWindow({
     Name = "CrowScript",
     Icon = 0,
     LoadingTitle = "載入中...",
-    LoadingSubtitle = "通用版 | 穩定執行",
+    LoadingSubtitle = "製作者 | 開發團隊",
     ShowText = "Rayfield", -- for mobile users to unhide Rayfield, change if you'd like
     Theme = "Default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
  
