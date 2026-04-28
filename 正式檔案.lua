@@ -28,6 +28,27 @@ local Window = Rayfield:CreateWindow({
 
  local CombatTab = Window:CreateTab("Combat", "swords")
  local VisualsTab = Window:CreateTab("Visuals", "eye")
+ Name = "ESP Highlight",
+    CurrentValue = false,
+    Callback = function(v)
+        espOn = v
+        for _, p in ipairs(game.Players:GetPlayers()) do
+            if p ~= game.Players.LocalPlayer and p.Character then
+                if v then
+                    local hl = Instance.new("Highlight")
+                    hl.Name = "UniversalESP"
+                    hl.FillColor = Color3.fromRGB(255, 0, 0)
+                    hl.OutlineColor = Color3.fromRGB(255,255,255)
+                    hl.Parent = p.Character
+                else
+                    local old = p.Character:FindFirstChild("UniversalESP")
+                    if old then old:Destroy() end
+                end
+            end
+        end
+    end
+})
+
  local MovementTab = Window:CreateTab("Movement", "footprints")
  local MiscTab = Window:CreateTab("Misc", "menu")
  local SettingsTab = Window:CreateTab("Settings", "settings")
