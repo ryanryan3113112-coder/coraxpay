@@ -75,9 +75,12 @@ local highSpeedEnabled = false
 local collisionHidden = false
 
 -- ==================== 1. 透視 ====================
-local function createHighlight(plr)
+local function createESP(plr)
     if highlights[plr] then highlights[plr]:Destroy() end
+    if nameTags[plr] then nameTags[plr]:Destroy() end
     if not plr.Character then return end
+    
+    -- Highlight
     local hl = Instance.new("Highlight")
     hl.Adornee = plr.Character
     hl.FillColor = Color3.fromRGB(255, 0, 255)
@@ -85,26 +88,41 @@ local function createHighlight(plr)
     hl.FillTransparency = 0.5
     hl.Parent = plr.Character
     highlights[plr] = hl
+    
+    -- 名稱顯示
+    local billboard = Instance.new("BillboardGui")
+    billboard.Adornee = plr.Character:FindFirstChild("Head") or plr.Character:FindFirstChild("HumanoidRootPart")
+    billboard.Size = UDim2.new(0, 150, 0, 40)
+    billboard.StudsOffset = Vector3.new(0, 3, 0)
+    billboard.AlwaysOnTop = true
+    billboard.Parent = plr.Character
+    
+    local textLabel = Instance.new("TextLabel")
+    textLabel.Size = UDim2.new(1, 0, 1, 0)
+    textLabel.BackgroundTransparency = 1
+    textLabel.Text = plr.Name
+    textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    textLabel.TextScaled = true
+    textLabel.Font = Enum.Font.SourceSansBold
+    textLabel.TextStrokeTransparency = 0
+    textLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+    textLabel.Parent = billboard
+    
+    nameTags[plr] = billboard
 end
 
 local function toggleESP(state)
     ESP_Enabled = state
     if state then
         for _, plr in ipairs(game.Players:GetPlayers()) do
-            if plr ~= player then createHighlight(plr) end
+            if plr ~= player then createESP(plr) end
         end
-        spawn(function()
-            while ESP_Enabled do
-                for _, plr in ipairs(game.Players:GetPlayers()) do
-                    if plr ~= player then createHighlight(plr) end
-                end
-                task.wait(0.8)
-            end
-        end)
-        print("✅ 透視 已開啟")
+        print("✅ 透視 已開啟（含名稱顯示）")
     else
-        for _, hl in pairs(highlights) do hl:Destroy() end
+        for _, v in pairs(highlights) do v:Destroy() end
+        for _, v in pairs(nameTags) do v:Destroy() end
         highlights = {}
+        nameTags = {}
         print("❌ 透視 已關閉")
     end
 end
