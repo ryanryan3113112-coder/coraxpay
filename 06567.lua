@@ -259,6 +259,45 @@ local function toggleCollisionHide(state)
         print("❌ 碰撞箱消失 已關閉")
     end
 end
+-- ==================== 鎖頭功能 (按鈕9) ====================
+local function getClosestHead()
+    local closest = nil
+    local shortest = math.huge
+    local myRoot = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+    if not myRoot then return nil end
+    
+    for _, plr in ipairs(game.Players:GetPlayers()) do
+        if plr ~= player and plr.Character and plr.Character:FindFirstChild("Head") then
+            local distance = (myRoot.Position - plr.Character.Head.Position).Magnitude
+            if distance < shortest then
+                shortest = distance
+                closest = plr.Character.Head
+            end
+        end
+    end
+    return closest
+end
+
+local function toggleAimlock(state)
+    aimlockEnabled = state
+    if state then
+        if aimlockConn then aimlockConn:Disconnect() end
+        aimlockConn = runService.RenderStepped:Connect(function()
+            if not aimlockEnabled then return end
+            local targetHead = getClosestHead()
+            if targetHead then
+                camera.CFrame = CFrame.lookAt(camera.CFrame.Position, targetHead.Position)
+            end
+        end)
+        print("✅ 鎖頭 已開啟")
+    else
+        if aimlockConn then
+            aimlockConn:Disconnect()
+            aimlockConn = nil
+        end
+        print("❌ 鎖頭 已關閉")
+    end
+end
 
 -- ==================== 建立20個按鈕 ====================
 local buttonStates = {}
@@ -279,6 +318,7 @@ for i = 1, 20 do
     elseif i == 6 then btn.Text = "高空TP"
     elseif i == 7 then btn.Text = "高速移動"
     elseif i == 8 then btn.Text = "碰撞消失"
+    elseif i == 9 then btn.Text = "鎖頭"
     else btn.Text = "測試 " .. i
     end
     
